@@ -1,0 +1,107 @@
+plugins {
+    // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'org.jetbrains.dokka' version '0.9.17'
+    id 'net.nemerosa.versioning' version '2.6.1'
+
+}
+
+group = "com.madurasoftware"
+version = "0.0.1"
+
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    // Use the Kotlin JDK 8 standard library.
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    // Use the Kotlin test library.
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+
+    // Use the Kotlin JUnit integration.
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task dokkaJar(type: Jar, dependsOn: dokka) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = javadoc.destinationDir
+}
+
+jar() {
+    manifest {
+        attributes(
+                'Built-By'       : System.properties['user.name'],
+                'Implementation-Title' : rootProject.name,
+                'Implementation-Version': version,
+                'Implementation-Vendor': 'Prometheus Consulting',
+                'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+                'Build-Revision' : versioning.info.commit,
+                'Created-By'     : "Gradle ${gradle.gradleVersion}",
+                'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+                'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'library'
+            from components.java
+            artifact sourcesJar
+            artifact dokkaJar
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'My Library'
+                description = 'A concise description of my library'
+                url = 'http://www.madurasoftware.com/library'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'rogerp'
+                        name = 'Roger Parkinson'
+                        email = 'roger.parkinson35 at gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:RogerParkinson/library.git'
+                    developerConnection = 'scm:git:git@github.com:RogerParkinson/library.git'
+                    url = 'scm:git:git@github.com:RogerParkinson/library.git'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("$buildDir/repository")
+        }
+    }
+}
