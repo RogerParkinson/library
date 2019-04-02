@@ -3,9 +3,9 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id 'org.jetbrains.dokka' version '0.9.17'
-    id 'signing'
-    id 'maven'
-    id 'com.bmuschko.nexus'
+//    id 'signing'
+//    id 'maven'
+    id 'com.bmuschko.nexus' version '2.3'
 //    id 'java-library'
 //    id("de.marcphilipp.nexus-publish") version "0.2.0"
 }
@@ -17,6 +17,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -31,7 +32,7 @@ dependencies {
 }
 
 
-task sourcesJar(type: Jar) {
+task sourceJar(type: Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -61,45 +62,47 @@ jar() {
     }
 }
 
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = 'library'
             from components.java
-            artifact sourcesJar
+            artifact sourceJar
             artifact dokkaJar
-//            versionMapping {
-//                usage('java-api') {
-//                    fromResolutionOf('runtimeClasspath')
-//                }
-//                usage('java-runtime') {
-//                    fromResolutionResult()
-//                }
-//            }
-            pom {
-                packaging = 'jar'
-                name = 'My Library'
-                description = 'A concise description of my library'
-                url = 'http://www.madurasoftware.com/library'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
                 }
-                developers {
-                    developer {
-                        id = 'rogerp'
-                        name = 'Roger Parkinson'
-                        email = 'roger.parkinson35 at gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git@github.com:RogerParkinson/library.git'
-                    developerConnection = 'scm:git:git@github.com:RogerParkinson/library.git'
-                    url = 'scm:git:git@github.com:RogerParkinson/library.git'
+                usage('java-runtime') {
+                    fromResolutionResult()
                 }
             }
+//            pom {
+//                packaging = 'jar'
+//                name = 'My Library'
+//                description = 'A concise description of my library'
+//                url = 'htt
+// p://www.madurasoftware.com/library'
+//                licenses {
+//                    license {
+//                        name = 'The Apache License, Version 2.0'
+//                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id = 'rogerp'
+//                        name = 'Roger Parkinson'
+//                        email = 'roger.parkinson35 at gmail.com'
+//                    }
+//                }
+//                scm {
+//                    connection = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                    developerConnection = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                    url = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                }
+//            }
         }
     }
     repositories {
@@ -110,46 +113,46 @@ publishing {
         }
     }
 }
-signing {
-//    required = true
-    useGpgCmd()
-    sign configurations.archives
-}
-artifacts {
-    archives dokkaJar, sourcesJar
-}
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file://localhost/tmp/myRepo/")
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            pom.project {
-                packaging = 'jar'
-                name = 'My Library'
-                description = 'A concise description of my library'
-                url = 'http://www.madurasoftware.com/library'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'rogerp'
-                        name = 'Roger Parkinson'
-                        email = 'roger.parkinson35 at gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git@github.com:RogerParkinson/library.git'
-                    developerConnection = 'scm:git:git@github.com:RogerParkinson/library.git'
-                    url = 'scm:git:git@github.com:RogerParkinson/library.git'
-                }
-            }
-        }
-    }
-}
+//signing {
+////    required = true
+//    useGpgCmd()
+//    sign configurations.archives
+//}
+//artifacts {
+//    archives dokkaJar, sourcesJar
+//}
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "file://localhost/tmp/myRepo/")
+//            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+//            pom.project {
+//                packaging = 'jar'
+//                name = 'My Library'
+//                description = 'A concise description of my library'
+//                url = 'http://www.madurasoftware.com/library'
+//                licenses {
+//                    license {
+//                        name = 'The Apache License, Version 2.0'
+//                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id = 'rogerp'
+//                        name = 'Roger Parkinson'
+//                        email = 'roger.parkinson35 at gmail.com'
+//                    }
+//                }
+//                scm {
+//                    connection = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                    developerConnection = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                    url = 'scm:git:git@github.com:RogerParkinson/library.git'
+//                }
+//            }
+//        }
+//    }
+//}
 //uploadArchives {
 //    repositories {
 //        mavenDeployer {
@@ -158,8 +161,39 @@ uploadArchives {
 //        }
 //    }
 //}
-//nexus {
-//    sign = true
-//    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-//    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
-//}
+
+modifyPom {
+    project {
+        name 'Library template'
+        description 'A non functioning library project used to show a working Gradle script'
+        url 'https://www.madurasoftware.com/library'
+        inceptionYear '2019'
+
+        scm {
+            url 'scm:git:git@github.com:RogerParkinson/library.git'
+            connection 'scm:git:git@github.com:RogerParkinson/library.git'
+            developerConnection 'scm:git:git@github.com:RogerParkinson/library.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'rogerp'
+                name = 'Roger Parkinson'
+                email = 'roger.parkinson35 at gmail.com'
+            }
+        }
+    }
+}
+nexus {
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+}
